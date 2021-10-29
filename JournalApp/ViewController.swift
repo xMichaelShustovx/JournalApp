@@ -29,9 +29,10 @@ class ViewController: UIViewController {
         notesModel.delegate = self
         
         // Set the status of the star filter button
+        setStarFilterButton()
         
-        // Retrieve all notes
-        notesModel.getNotes()
+        // Retrieve all notes according to the filter status
+        notesModel.getNotes(isStarFiltered)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -49,12 +50,31 @@ class ViewController: UIViewController {
         noteViewController.notesModel = self.notesModel
     }
     
-    @IBAction func starFilterTapped(_ sender: Any) {
+    func setStarFilterButton() {
         
-        
+        let imageName = isStarFiltered ? "star.fill" : "star"
+        starButton.image = UIImage(systemName: imageName)
         
     }
     
+    @IBAction func starFilterTapped(_ sender: Any) {
+        
+        // Change star filter value
+        isStarFiltered.toggle()
+
+        // Get notes array according to the current filter
+        notesModel.getNotes(isStarFiltered)
+        
+        // Show the changes
+        DispatchQueue.main.async {
+            
+            // Change star filer button
+            self.setStarFilterButton()
+            
+            // Reload table view data
+            self.tableView.reloadData()
+        }
+    }
 }
 
 // MARK: - Table View Delegate Methods
